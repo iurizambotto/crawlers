@@ -1,10 +1,24 @@
 from selenium import webdriver
 from datetime import datetime
-# from google.cloud import storage
 import time
 import os
 import mysql.connector
-import base64
+from utils import take_screenshot
+
+columns_mapping = {
+    "situacao": "str",
+    "navio": "str",
+    "viagem_tcp": "str",
+    "service": "str",
+    "dt_chegada_estimada": "datetime",
+    "dt_chegada_barra": "datetime",
+    "dt_previsao_atracacao": "datetime",
+    "dt_previsao_saida": "datetime",
+    "dt_atracacao": "datetime",
+    "dt_saida": "datetime",
+    "dt_deadline": "datetime",
+    "dt_bws_starting": "datetime",
+}
 
 class TCP():
 
@@ -136,8 +150,9 @@ class TCP():
         """
         self.navigator.execute_script(function)
 
-        self._take_screenshot(
-            f"tcp/print_{datetime.today().strftime('%Y-%m-%d %H:%M:%S')}.png"
+        take_screenshot(
+            f"tcp/print_{datetime.today().strftime('%Y-%m-%d %H:%M:%S')}.png",
+            self.navigator
         )
 
         elements = self.navigator.find_elements_by_class_name("mat-row")
@@ -148,22 +163,10 @@ class TCP():
                 elements[{i}].scrollIntoView();
                 """
                 self.navigator.execute_script(function)
-                self._take_screenshot(
-                    f"data/tcp/print_{datetime.today().strftime('%Y-%m-%d %H:%M:%S')}.png"
+                take_screenshot(
+                    f"tcp/print_{datetime.today().strftime('%Y-%m-%d %H:%M:%S')}.png",
+                    self.navigator
                 )
-    
-    def _take_screenshot(self, file_name):
-        time.sleep(2)
-        str_base64 = self.navigator.get_screenshot_as_base64()
-        open(file_name, "wb").write(base64.urlsafe_b64decode(str_base64))
-        
-        # client = storage.Client.from_service_account_json('./keys/ellox-web-scraping.json')     
-        # bucket = client.get_bucket(self.cfg.get('GStorageSection', 'bucket.name'))
-        # blob = bucket.blob(file_name)
-
-        # # Uploading from local file without open()
-        # blob.upload_from_string(data=base64.urlsafe_b64decode(str_base64), content_type="image/jpeg")
-        print(f"File was saved: {file_name}")
 
 
 class TCPEntity():
@@ -182,34 +185,15 @@ class TCPEntity():
         self.dt_saida = dt_saida
 
     def convert_dt_objects(self, str_pattern):
-        # '%d/%m/%Y %H:%M:%S'
-        if self.dt_chegada_estimada != "" or "-" not in self.dt_chegada_estimada:
-            self.dt_chegada_estimada_dtobj = datetime.strptime(self.dt_chegada_estimada, str_pattern)
-
-        if self.dt_previsao_atracacao != "" and "-" not in self.dt_previsao_atracacao:
-            self.dt_previsao_atracacao_dtobj = datetime.strptime(self.dt_previsao_atracacao, str_pattern)
-
-        if self.dt_previsao_saida != "" and "-" not in self.dt_previsao_saida:
-            self.dt_previsao_saida_dtobj = datetime.strptime(self.dt_previsao_saida, str_pattern) 
-
-        if self.dt_deadline != "" and "-" not in self.dt_deadline:
-            self.dt_deadline_dtobj = datetime.strptime(self.dt_deadline, str_pattern)
-
-        if self.dt_bws_starting != "" and "-" not in self.dt_bws_starting:
-            self.dt_bws_starting_dtobj = datetime.strptime(self.dt_bws_starting, str_pattern)
-
-        if self.dt_chegada_barra != "" and "-" not in self.dt_chegada_barra:
-            self.dt_chegada_barra_dtobj = datetime.strptime(self.dt_chegada_barra, str_pattern) 
-        else:
-            self.dt_chegada_barra_dtobj = None
-
-        if self.dt_atracacao != "" and "-" not in self.dt_atracacao:
-            self.dt_atracacao_dtobj = datetime.strptime(self.dt_atracacao, str_pattern)
-        else:
-            self.dt_atracacao_dtobj = None
-
-        if self.dt_saida != "" and "-" not in self.dt_saida:
-            self.dt_saida_dtobj = datetime.strptime(self.dt_saida, str_pattern)
-        else:
-            self.dt_saida_dtobj = None
-            
+        for column, column_type in columns_mapping.items():
+            if column_type == "datetime":
+                if getattr(self, column) != "" and "-" not in getattr(self, column):
+                    setattr(
+                        self,
+                        f"{column}_dtobj",
+                        datetime.strptime(
+                            getattr(self, column), str_pattern
+                        )
+                    )
+                else:
+                    setattr(self, f"{column}_dtobj", None)
