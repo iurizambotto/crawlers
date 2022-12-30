@@ -98,46 +98,18 @@ class TCP:
                     + str(len(ships))
                 )
                 ship = {
-                    "situacao": ships[n]
-                    .find_elements_by_class_name("cdk-column-Situacao")[0]
-                    .text,
-                    "navio": ships[n]
-                    .find_elements_by_class_name("cdk-column-Navio")[0]
-                    .text,
-                    "viagem_tcp": ships[n]
-                    .find_elements_by_class_name("cdk-column-ViagemTcp")[0]
-                    .text,
-                    "service": ships[n]
-                    .find_elements_by_class_name("cdk-column-Service")[0]
-                    .text,
-                    "dt_chegada_estimada": ships[n]
-                    .find_elements_by_class_name("cdk-column-ChegadaEstimada")[
-                        0
-                    ]
-                    .text,
-                    "dt_chegada_barra": ships[n]
-                    .find_elements_by_class_name("cdk-column-ChegadaBarra")[0]
-                    .text,
-                    "dt_previsao_atracacao": ships[n]
-                    .find_elements_by_class_name(
-                        "cdk-column-PrevisaoAtracacao"
-                    )[0]
-                    .text,
-                    "dt_previsao_saida": ships[n]
-                    .find_elements_by_class_name("cdk-column-PrevisaoSaida")[0]
-                    .text,
-                    "dt_atracacao": ships[n]
-                    .find_elements_by_class_name("cdk-column-Atracacao")[0]
-                    .text,
-                    "dt_saida": ships[n]
-                    .find_elements_by_class_name("cdk-column-Saida")[0]
-                    .text,
-                    "dt_deadline": ships[n]
-                    .find_elements_by_class_name("cdk-column-DeadLine")[0]
-                    .text,
-                    "dt_bws_starting": ships[n]
-                    .find_elements_by_class_name("cdk-column-BWStarting")[0]
-                    .text,
+                    "situacao": ships[n].find_elements_by_class_name("cdk-column-Situacao")[0].text,
+                    "navio": ships[n].find_elements_by_class_name("cdk-column-Navio")[0].text,
+                    "viagem_tcp": ships[n].find_elements_by_class_name("cdk-column-ViagemTcp")[0].text,
+                    "service": ships[n].find_elements_by_class_name("cdk-column-Service")[0].text,
+                    "dt_chegada_estimada": ships[n].find_elements_by_class_name("cdk-column-ChegadaEstimada")[0].text,
+                    "dt_chegada_barra": ships[n].find_elements_by_class_name("cdk-column-ChegadaBarra")[0].text,
+                    "dt_previsao_atracacao": ships[n].find_elements_by_class_name("cdk-column-PrevisaoAtracacao")[0].text,
+                    "dt_previsao_saida": ships[n].find_elements_by_class_name("cdk-column-PrevisaoSaida")[0].text,
+                    "dt_atracacao": ships[n].find_elements_by_class_name("cdk-column-Atracacao")[0].text,
+                    "dt_saida": ships[n].find_elements_by_class_name("cdk-column-Saida")[0].text,
+                    "dt_deadline": ships[n].find_elements_by_class_name("cdk-column-DeadLine")[0].text,
+                    "dt_bws_starting": ships[n].find_elements_by_class_name("cdk-column-BWStarting")[0].text,
                 }
                 tcp_entity = TCPEntity(**ship)
 
